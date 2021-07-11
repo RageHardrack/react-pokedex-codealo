@@ -6,6 +6,8 @@ import Pokedex from "./components/Pokedex";
 import SearchBar from "./components/SearchBar";
 import { FavoriteProvider } from "./context/favoritesContext";
 
+const localStorageKey = "favorite_pokemon";
+
 function App() {
   const [pokemons, setPokemons] = useState([]);
   const [page, setPage] = useState(0);
@@ -30,7 +32,19 @@ function App() {
     }
   };
 
+  const loadFavoritePokemons = () => {
+    const pokemons =
+      JSON.parse(window.localStorage.getItem(localStorageKey)) || [];
+    setFavorites(pokemons);
+  };
+
   useEffect(() => {
+    console.log("Obteniendo pokemones favoritos");
+    loadFavoritePokemons();
+  }, []);
+
+  useEffect(() => {
+    console.log("Obteniendo todos los pokemones");
     fetchPokemons();
   }, [page]);
 
@@ -43,6 +57,7 @@ function App() {
       updated.push(name);
     }
     setFavorites(updated);
+    window.localStorage.setItem(localStorageKey, JSON.stringify(updated));
   };
 
   return (
